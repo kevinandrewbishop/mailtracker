@@ -1,3 +1,4 @@
+
 from setuptools import setup
 
 setup(name = 'mailtracker',
@@ -8,5 +9,4 @@ setup(name = 'mailtracker',
     author_email = 'kevinandrewbishop@gmail.com',
     license = 'MIT',
     packages = ['mailtracker'],
-    zip_safe = False,
-    scripts = [''])
+    zip_safe = False)
