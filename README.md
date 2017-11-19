@@ -10,7 +10,8 @@ project, but is intended to work as a general package.
 
 One of the most frustrating parts of keeping a budget is the need to manually
 download a csv of transactions before running it through a python script or
-excel worksheet. First, it simply takes time to log in to the financial website.
+excel worksheet. First, it simply takes time to log in to the financial website
+and download the csv.
 More importantly, as you periodically download these csvs to keep your budget
 up to date, you have to make sure you aren't re-downloading transactions from
 the last time you updated your budget. Sometimes this is non-trivial as certain
@@ -39,27 +40,33 @@ The email checking service should be set to run on an automated loop every
 so many minutes.
 
 ## Example
-
+One-time reading of email:
 ```python
-import os
-#Password should be stored as environment variable rather than plain text
-config = {
-    'host': 'imap.mail.yahoo.com',
-    'port': 993,
-    'folder': 'Visa',
-    'email': 'my_email@example.com',
-    'password': os.environ.get('password')
-    }
+from mailtracker import EmailClient
 
-client = EmailClient(**config)
+client = EmailClient('foo@example.com', 'mypassword', folder = 'Visa')
 pattern = r'my regex (pattern)'
 #Reads latest message by default
 client.read_message(pattern = pattern)
 >>> 'result of regex'
 
-#Read a specific message identified by ID
+#Read message with message_id 52
 client.read_message(52, pattern = pattern)
 ```
+
+To periodically check the email against a csv of previous downloads, use the
+TransactionManager class. This class stores downloads in a csv, and periodically
+checks for new emails. Any new messages will be appended to the csv.  
+
+```python
+from mailtracker import TransactionManager, EmailClient
+client = EmailClient('foo@example.com', 'mypassword', folder = 'Visa')
+pattern = r'my regex (pattern)'
+filename = 'downloads.csv'
+tm = TransactionManager(client, filename, pattern)
+tm.run(60) #run every 60 seconds
+```
+
 
 ### Yahoo
 
