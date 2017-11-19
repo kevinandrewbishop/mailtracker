@@ -6,39 +6,6 @@ text using regular expressions, and store the results in a local file
 or database. It was built to help with a budget automation
 project, but is intended to work as a general package.  
 
-## Budget Automation Use Case
-
-One of the most frustrating parts of keeping a budget is the need to manually
-download a csv of transactions before running it through a python script or
-excel worksheet. First, it simply takes time to log in to the financial website
-and download the csv.
-More importantly, as you periodically download these csvs to keep your budget
-up to date, you have to make sure you aren't re-downloading transactions from
-the last time you updated your budget. Sometimes this is non-trivial as certain
-vendors, like restaurants, often have a lag of multiple days between the date
-of the actual transaction vs the date it appears on the website.  
-
-Some applications, like mint, claim to automatically do this, but I have found
-they are incompatible with certain credit cards.  
-
-To get around this problem, this package uses the email alert system credit
-cards usually provide. Most credit cards offer a way to create automated email
-alerts whenever a condition is met (transaction above a certain amount, balance
-above a certain amount, etc).   
-
-The overall workflow is as follows:  
-1. Set credit card email alerts on all transactions above a nominal amount
-(e.g. $5)
-2. Create an email filter rule that moves all of these alert messages to a
-specific folder (e.g. "Visa")
-3. Use this package to download those emails and extract the relevant fields
-using regular expressions
-4. Store the contents in an application (e.g. flask app with sql database) to
-track transactions  
-
-The email checking service should be set to run on an automated loop every
-so many minutes.
-
 ## Example 
 
 In the following example assume there is a folder called "Visa" that contains
@@ -89,6 +56,38 @@ tm = TransactionManager(client, filename, pattern)
 tm.run(60) #run every 60 seconds
 ```
 
+## Budget Automation Use Case
+
+One of the most frustrating parts of keeping a budget is the need to manually
+download a csv of transactions before running it through a python script or
+excel worksheet. First, it simply takes time to log in to the financial website
+and download the csv.
+More importantly, as you periodically download these csvs to keep your budget
+up to date, you have to make sure you aren't re-downloading transactions from
+the last time you updated your budget. Sometimes this is non-trivial as certain
+vendors, like restaurants, often have a lag of multiple days between the date
+of the actual transaction vs the date it appears on the website.  
+
+Some applications, like mint, claim to automatically do this, but I have found
+they are incompatible with certain credit cards.  
+
+To get around this problem, this package uses the email alert system credit
+cards usually provide. Most credit cards offer a way to create automated email
+alerts whenever a condition is met (transaction above a certain amount, balance
+above a certain amount, etc).   
+
+The overall workflow is as follows:  
+1. Set credit card email alerts on all transactions above a nominal amount
+(e.g. $5)
+2. Create an email filter rule that moves all of these alert messages to a
+specific folder (e.g. "Visa")
+3. Use this package to download those emails and extract the relevant fields
+using regular expressions
+4. Store the contents in an application (e.g. flask app with sql database) to
+track transactions  
+
+The email checking service should be set to run on an automated loop every
+so many minutes.
 
 
 ### Yahoo
