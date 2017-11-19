@@ -39,21 +39,23 @@ track transactions
 The email checking service should be set to run on an automated loop every
 so many minutes.
 
-## Example
+## Example 
+
 In the following example assume there is a folder called "Visa" that contains
 transaction notifications for a visa credit card. A typical email might look
-like this:
-----
+like this:  
+```
 Dear User,
-The following is a transaction notification you requested for account number
-123. You can change your preferences by visiting our website.
+
+The following is a transaction notification you requested for account number 123.
+You can change your alert preferences by visiting our website.
 Merchant: Starbucks
 Amount: $95.43
 Date: January 2, 2018
 
 Thank you,
 The Visa Team
-----
+```
 
 We can pass our EmailClient a regular expression to extract
 the Merchant, Amount, and Date.
