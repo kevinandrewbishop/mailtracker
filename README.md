@@ -40,32 +40,53 @@ The email checking service should be set to run on an automated loop every
 so many minutes.
 
 ## Example
-One-time reading of email:
+In the following example assume there is a folder called "Visa" that contains
+transaction notifications for a visa credit card. A typical email might look
+like this:
+----
+Dear User,
+The following is a transaction notification you requested for account number
+123. You can change your preferences by visiting our website.
+Merchant: Starbucks
+Amount: $95.43
+Date: January 2, 2018
+
+Thank you,
+The Visa Team
+----
+
+We can pass our EmailClient a regular expression to extract
+the Merchant, Amount, and Date.
+
 ```python
 from mailtracker import EmailClient
 
 client = EmailClient('foo@example.com', 'mypassword', folder = 'Visa')
-pattern = r'my regex (pattern)'
+pattern = r'Merchant: (.*)[\s]*Amount: \$(.*)[\s]*Date: (.*)'
+
 #Reads latest message by default
 client.read_message(pattern = pattern)
->>> 'result of regex'
+>>> [('Starbucks', '95.43', 'January 2, 2018')]
 
 #Read message with message_id 52
 client.read_message(52, pattern = pattern)
 ```
 
-To periodically check the email against a csv of previous downloads, use the
+We can periodically check the email using the
 TransactionManager class. This class stores downloads in a csv, and periodically
 checks for new emails. Any new messages will be appended to the csv.  
 
 ```python
 from mailtracker import TransactionManager, EmailClient
+
 client = EmailClient('foo@example.com', 'mypassword', folder = 'Visa')
-pattern = r'my regex (pattern)'
+pattern = r'Merchant: (.*)[\s]*Amount: \$(.*)[\s]*Date: (.*)'
 filename = 'downloads.csv'
+
 tm = TransactionManager(client, filename, pattern)
 tm.run(60) #run every 60 seconds
 ```
+
 
 
 ### Yahoo
@@ -97,3 +118,25 @@ their email in this way. You can change this setting here:
 https://support.google.com/mail/accounts/answer/78754
 
 ### Database
+
+In the current version, the "database" is simply a csv. Future versions will
+include json format and, most likely, database urls.
+
+
+## Installation
+
+### Using Pip
+
+To install using pip, run the following command:
+```bash
+pip install git+https://github.com/kevinandrewbishop/mailtracker.git
+```
+
+### Using github
+
+To install using github, run the following commands:
+```bash
+git clone https://github.com/kevinandrewbishop/mailtracker
+cd mailtracker
+python setup.py install
+```
