@@ -8,7 +8,7 @@ project, but is intended to work as a general package.
 
 ## Example 
 
-In the following example assume there is a folder called "Visa" that contains
+In the following example assume your email account has a folder called "Visa" that contains
 transaction notifications for a visa credit card. A typical email might look
 like this:  
 ```
@@ -56,6 +56,58 @@ tm = TransactionManager(client, filename, pattern)
 tm.run(60) #run every 60 seconds
 ```
 
+## Yahoo
+
+This package was built and tested using a yahoo email account. In theory it
+should work with all accounts that use imap4.  
+
+#### Unique Email ID
+Yahoo appears to identify each email in a folder by the order in which it was
+placed in that folder. The first email to arrive in the folder is 1, the second
+is 2 and so on up to N, where N is the total number of emails in the folder.  
+
+This is a very unstable way of identifying individual emails. For example:  
+* If an email is deleted, any email with a higher ID number gets decremented
+by 1
+* If an email is moved to another folder, then moved back into the current
+folder, that email is now ID number N  
+
+For the initial version, I assume emails enter a folder and never leave. This is
+a simplifying assumption that will probably be fixed later. But for the use-case
+of scraping automated credit card transaction emails, I think the assumption is
+not unrealistic. The user simply needs to make an email filter rule that moves
+any emails from institution X to a special folder.
+
+## Gmail
+
+Please note that Gmail by default does not allow users to access
+their email in this way. You can change this setting here:  
+https://support.google.com/mail/accounts/answer/78754
+
+## Database
+
+In the current version, the "database" is simply a csv. Future versions will
+include json format and, most likely, database urls.
+
+
+## Installation
+
+### Using Pip
+
+To install using pip, run the following command:
+```bash
+pip install git+https://github.com/kevinandrewbishop/mailtracker.git
+```
+
+### Using github
+
+To install using github, run the following commands:
+```bash
+git clone https://github.com/kevinandrewbishop/mailtracker
+cd mailtracker
+python setup.py install
+```
+
 ## Budget Automation Use Case
 
 One of the most frustrating parts of keeping a budget is the need to manually
@@ -88,56 +140,3 @@ track transactions
 
 The email checking service should be set to run on an automated loop every
 so many minutes.
-
-
-### Yahoo
-
-This package was built and tested using a yahoo email account. In theory it
-should work with all accounts that use imap4.  
-
-#### Unique Email ID
-Yahoo appears to identify each email in a folder by the order in which it was
-placed in that folder. The first email to arrive in the folder is 1, the second
-is 2 and so on up to N, where N is the total number of emails in the folder.  
-
-This is a very unstable way of identifying individual emails. For example:  
-* If an email is deleted, any email with a higher ID number gets decremented
-by 1
-* If an email is moved to another folder, then moved back into the current
-folder, that email is now ID number N  
-
-For the initial version, I assume emails enter a folder and never leave. This is
-a simplifying assumption that will probably be fixed later. But for the use-case
-of scraping automated credit card transaction emails, I think the assumption is
-not unrealistic. The user simply needs to make an email filter rule that moves
-any emails from institution X to a special folder.
-
-### Gmail
-
-Please note that Gmail by default does not allow users to access
-their email in this way. You can change this setting here:  
-https://support.google.com/mail/accounts/answer/78754
-
-### Database
-
-In the current version, the "database" is simply a csv. Future versions will
-include json format and, most likely, database urls.
-
-
-## Installation
-
-### Using Pip
-
-To install using pip, run the following command:
-```bash
-pip install git+https://github.com/kevinandrewbishop/mailtracker.git
-```
-
-### Using github
-
-To install using github, run the following commands:
-```bash
-git clone https://github.com/kevinandrewbishop/mailtracker
-cd mailtracker
-python setup.py install
-```
