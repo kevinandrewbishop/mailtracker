@@ -18,12 +18,12 @@ class EmailClient():
         Folder: str, default INBOX. The folder where the email is stored.
             e.g. "sent", "inbox", "visa"
         '''
-        self.email = email
-        self.password = password
-        self.port = port
-        self.host = host
+        self._email = email
+        self._password = password
+        self._port = port
+        self._host = host
         if host is None:
-            self.host, self.port = self._get_host(email)
+            self._host, self._port = self._get_host(email)
         self.folder = folder
         self._create_server()
 
@@ -31,8 +31,8 @@ class EmailClient():
         '''
         Creates an imaplib server object and connects to the email server.
         '''
-        self.server = imaplib.IMAP4_SSL(self.host, self.port)
-        self.server.login(self.email, self.password)
+        self.server = imaplib.IMAP4_SSL(self._host, self._port)
+        self.server.login(self._email, self._password)
         _, num_messages = self.select(self.folder)
         self.num_messages = int(num_messages[0])
 
