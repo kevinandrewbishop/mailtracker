@@ -1,5 +1,5 @@
 from time import sleep
-import csv
+import csv, json
 import os
 
 class TransactionManager():
@@ -16,12 +16,12 @@ class TransactionManager():
 	def read_db(self):
 		'''
 		Reads the transactions in the database.
-		Currently the only "database" accepted is a CSV.
+		Currently the only "database" accepted is a json file.
 		'''
 		if not os.path.exists(self.url):
 			return None
-		with open(self.url) as f:
-			data = [item for item in csv.reader(f)]
+		if self.url.endswith('json'):
+			data = json.load(open(self.url))
 		return data
 
 	def get_max_id(self):
@@ -31,9 +31,7 @@ class TransactionManager():
 		data = self.read_db()
 		if data is None:
 			return 0
-		max_ =  data[-1][0]
-		if max_ == 'id':
-			return 0
+		max_ =  data[-1]['id']
 		return int(max_)
 
 	def set_regex(self, regex = None):
@@ -51,18 +49,20 @@ class TransactionManager():
 		message_id = self.get_max_id()
 		while message_id < self.client.num_messages:
 			message_id += 1
-			record = self.client.read_message(str(message_id), self.regex)[0]
-			record = list(record)
-			print('Record found: %s' %' '.join(record))
+			record = self.client.read_message(str(message_id), self.regex)
+			print('Record found: %s' %record)
 			self.update_transactions(message_id, record)
 
 	def update_transactions(self, message_id, record):
 		'''
 		Adds new transactions to database.
 		'''
-		with open(self.url, 'a') as f:
-			writer = csv.writer(f)
-			writer.writerow([message_id] + record)
+		data = self.read_db()
+		if data is None:
+			data = list()
+		record['id'] = message_id
+		data.append(record)
+		json.dump(data, open(self.url, 'w'))
 
 	def run(self, seconds = 30):
 		'''
