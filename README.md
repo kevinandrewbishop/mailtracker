@@ -31,6 +31,7 @@ the Merchant, Amount, and Date.
 from mailtracker import EmailClient
 
 client = EmailClient('foo@example.com', 'mypassword', folder = 'Visa')
+#The regex pattern we use to extract relevant fields from our email message
 pattern = r'Merchant: (.*)[\s]*Amount: \$(.*)[\s]*Date: (.*)'
 
 #Reads latest message by default
@@ -42,15 +43,15 @@ client.read_message(52, pattern = pattern)
 ```
 
 We can periodically check the email using the
-TransactionManager class. This class stores downloads in a csv, and periodically
-checks for new emails. Any new messages will be appended to the csv.  
+TransactionManager class. This class stores downloads in JSON format, and periodically
+checks for new emails. Any new messages will be appended to the JSON file.  
 
 ```python
 from mailtracker import TransactionManager, EmailClient
 
 client = EmailClient('foo@example.com', 'mypassword', folder = 'Visa')
 pattern = r'Merchant: (.*)[\s]*Amount: \$(.*)[\s]*Date: (.*)'
-filename = 'downloads.csv'
+filename = 'downloads.json'
 
 tm = TransactionManager(client, filename, pattern)
 tm.run(60) #run every 60 seconds
@@ -86,8 +87,9 @@ https://support.google.com/mail/accounts/answer/78754
 
 ## Database
 
-In the current version, the "database" is simply a csv. Future versions will
-include json format and, most likely, database urls.
+In the current version, the "database" is simply a JSON file. Future versions will
+likely include database urls. Simpler formats such as CSV were not found to be a good
+fit due to the nested structure of email data.
 
 
 ## Installation
@@ -130,12 +132,13 @@ above a certain amount, etc).
 
 The overall workflow is as follows:  
 1. Set credit card email alerts on all transactions above a nominal amount
-(e.g. $5)
+(e.g. $1)
 2. Create an email filter rule that moves all of these alert messages to a
 specific folder (e.g. "Visa")
 3. Use this package to download those emails and extract the relevant fields
 using regular expressions
-4. Store the contents in an application (e.g. flask app with sql database) to
+4. Store the contents in a JSON file
+5. Parse the JSON file and serve in an application (e.g. flask app with sql database) to
 track transactions  
 
 The email checking service should be set to run on an automated loop every
